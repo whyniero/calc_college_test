@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.2.0/mocha.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.2.0/mocha.js"></script>
+    <script>
+        mocha.setup('bdd');
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.5.0/chai.js"></script>
+    <script>
+        let assert = chai.assert;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="calc">
+            <div class="window">
+                <span></span>
+            </div>
+            <div class="panel">
+                <button class="procent" onclick="procent(a, b)">%</button>
+                <button class="degree" onclick="degree(a, b)">x^z</button>
+                <button class="root" onclick="root(a)">√</button>
+                <button class="increase" onclick="increase(a, b)">+</button>
+                <button class="decrease" onclick="decrease(a, b)">-</button>
+                <button class="multiply" onclick="multiply(a, b)">*</button>
+                <button class="devide" onclick="devide(a, b)">/</button>
+                <button class="remove" onclick="remove()"><-</button>
+            </div>
+        </div>
+    </div>
+    <script src="./index.js"></script>
+    <script src="./test.js"></script>
+    <div id="mocha"></div>
+    <script>mocha.run()</script>
+</body>
+</html>
