@@ -97,6 +97,7 @@ function setOperation(symbol, operationFunc) {
     if (symbol === "√") {
         resetPercent();
         inputB.style.display = "none";
+        inputB.value = "";
     } else {
         inputB.style.display = "inline-block";
     }
