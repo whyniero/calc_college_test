@@ -67,7 +67,7 @@ function getValues() {
 function roundRes(res) {
     try {
         if (res >= 1e21) throw new Error("Результат слишком большой");
-        else if (res < 0.00000005 && res !== 0) throw new Error("Результат слишком маленький");
+        else if (res < 0.0000001 && res !== 0) throw new Error("Результат слишком маленький");
         return Number(res.toFixed(7));
     } catch (error) {
         console.log(error);
