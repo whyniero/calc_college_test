@@ -8,8 +8,6 @@ const procentBtn = document.querySelector(".percent-btn");
 let selectedOperation = null; // Выбранная операция, изначально пустая
 let activeButton = null; // Активная кнопка выбранной операции
 let isPercentApplied = false; // Флаг для отслеживания применения процента
-let originalInputBValue = null; // Переменная для хранения исходного значения inputB
-let percentValue = null; // Переменная для хранения вычисленного значения процента
 
 document.querySelectorAll("input").forEach(input => {
     input.addEventListener("input", function () {
@@ -45,17 +43,13 @@ function updateProcentButtonState() {
         if (isPercentApplied) {
             procentBtn.style.backgroundColor = "green";
         } else {
-            // Иначе цвет по умолчанию
+            // Иначе цвет по умолчанию (синий, задается через CSS)
             procentBtn.style.backgroundColor = "";
         }
     } else {
         procentBtn.disabled = true;
-        // Если процент применен, кнопка зеленая, иначе серая
-        if (isPercentApplied) {
-            procentBtn.style.backgroundColor = "green";
-        } else {
-            procentBtn.style.backgroundColor = "#bdbdbd";
-        }
+        // Если поля пустые, кнопка серая
+        procentBtn.style.backgroundColor = "#bdbdbd";
     }
 }
 
@@ -64,12 +58,7 @@ function getValues() {
     // Удаляем символ % из inputB, если он есть
     const inputBValue = inputB.value.replace('%', '');
     const a = parseFloat(inputA.value) || 0;
-    let b = parseFloat(inputBValue) || 0;
-
-    // Если процент применен, используем вычисленное значение процента
-    if (isPercentApplied) {
-        b = percentValue;
-    }
+    const b = parseFloat(inputBValue) || 0;
 
     return [a, b];
 }
@@ -91,10 +80,8 @@ function roundRes(res) {
 function resetPercent() {
     if (isPercentApplied) {
         // Удаляем символ % из inputB
-        inputB.value = originalInputBValue;
+        inputB.value = inputB.value.replace('%', '');
         isPercentApplied = false; // Сбрасываем флаг
-        originalInputBValue = null; // Сбрасываем сохраненное значение
-        percentValue = null; // Сбрасываем вычисленное значение процента
         procentBtn.style.backgroundColor = ""; // Возвращаем цвет по умолчанию
         updateProcentButtonState(); // Обновляем состояние кнопки
     }
@@ -126,11 +113,31 @@ function setOperation(symbol, operationFunc) {
 
 // Выполнение вычисления только после нажатия "="
 function calculate() {
+    errorField.textContent = "";
     if (!selectedOperation) {
         errorField.textContent = "Выберите операцию";
         return;
     }
-    selectedOperation();
+
+    // Извлекаем значения
+    let [a, b] = getValues();
+
+    // Если процент применен, преобразуем b в зависимости от операции
+    if (isPercentApplied) {
+        if (selectedOperation === increase || selectedOperation === decrease) {
+            // Для сложения и вычитания: b% означает b% от a
+            b = a * (b / 100);
+        } else {
+            // Для умножения, деления и возведения в степень: b% означает b / 100
+            b = b / 100;
+        }
+    }
+
+    // Выполняем выбранную операцию с учетом процента
+    const res = selectedOperation(a, b);
+    if (res !== null) {
+        monitor.textContent = res;
+    }
 }
 
 // Функция для обработки процента (переключение процента для inputB)
@@ -139,19 +146,13 @@ function applyPercent() {
     if (!a || !b) return; // Если одно из полей пустое – ничего не делаем
 
     if (isPercentApplied) {
-        // Если процент уже применен, возвращаем исходное значение
-        inputB.value = originalInputBValue;
+        // Если процент уже применен, убираем символ %
+        inputB.value = inputB.value.replace('%', '');
         isPercentApplied = false; // Сбрасываем флаг
-        originalInputBValue = null; // Сбрасываем сохраненное значение
-        percentValue = null; // Сбрасываем вычисленное значение процента
         procentBtn.style.backgroundColor = ""; // Возвращаем цвет по умолчанию
     } else {
-        // Сохраняем исходное значение inputB
-        originalInputBValue = b.toString();
-        // Вычисляем процент: (inputA / 100) * inputB
-        percentValue = (a / 100) * b;
         // Добавляем символ % к значению inputB (визуально)
-        inputB.value = originalInputBValue + '%';
+        inputB.value = inputB.value + '%';
         // Меняем стиль кнопки процента
         procentBtn.style.backgroundColor = "green";
         isPercentApplied = true; // Устанавливаем флаг, что процент применен
@@ -162,33 +163,25 @@ function applyPercent() {
 }
 
 // Операции калькулятора
-function increase() {
-    const [a, b] = getValues();
+function increase(a, b) {
     const res = roundRes(a + b);
-    monitor.textContent = res;
     return res;
 }
 
-function decrease() {
-    const [a, b] = getValues();
+function decrease(a, b) {
     const res = roundRes(a - b);
-    monitor.textContent = res;
     return res;
 }
 
-function multiply() {
-    const [a, b] = getValues();
+function multiply(a, b) {
     const res = roundRes(a * b);
-    monitor.textContent = res;
     return res;
 }
 
-function divide() {
-    const [a, b] = getValues();
+function divide(a, b) {
     try {
         if (b === 0) throw new Error("На ноль делить нельзя");
         const res = roundRes(a / b);
-        monitor.textContent = res;
         return res;
     } catch (error) {
         console.log(error);
@@ -198,19 +191,15 @@ function divide() {
     }
 }
 
-function degree() {
-    const [a, b] = getValues();
+function degree(a, b) {
     const res = roundRes(a ** b);
-    monitor.textContent = res;
     return res;
 }
 
-function root() {
-    const [a] = getValues();
+function root(a) {
     try {
         if (a < 0) throw new Error("Отрицательного числа в корне быть не может");
         const res = roundRes(Math.sqrt(a));
-        monitor.textContent = res;
         return res;
     } catch (error) {
         console.log(error);
@@ -232,8 +221,6 @@ function remove() {
     activeButton = null;
     selectedOperation = null;
     isPercentApplied = false; // Сбрасываем флаг процента
-    originalInputBValue = null; // Сбрасываем сохраненное значение
-    percentValue = null; // Сбрасываем вычисленное значение процента
 
     inputB.style.display = "inline-block";
     updateProcentButtonState(); // Обновляем состояние кнопки процента

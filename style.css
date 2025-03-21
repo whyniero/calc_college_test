@@ -54,14 +54,10 @@ body {
   background-color: rgb(25, 35, 218);
   font-weight: bold;
   font-size: 18px;
-}
-button {
   width: 60px;
   height: 60px;
   border: none;
-  background-color: white;
   cursor: pointer;
-  border: 1px solid #d3d3d3;
   transition: background-color 0.1s ease;
 }
 
