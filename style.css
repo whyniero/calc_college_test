@@ -34,7 +34,7 @@ body {
   justify-content: center;
 }
 
-.window input{
+.window input {
   width: 60px;
   height: 60px;
   border: solid 1px white;
@@ -84,10 +84,17 @@ button.active {
   transition: background-color 0.1s ease;
 }
 .equal:hover {
-  background-color: rgb(189, 189, 189);
+  background-color: #bdbdbd;
 }
 
 span {
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 40px;
+  font-size: 30px;
+}
+
+.error-field {
+  color: red;
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
 }
