@@ -54,14 +54,10 @@ body {
   background-color: rgb(25, 35, 218);
   font-weight: bold;
   font-size: 18px;
-}
-button {
   width: 60px;
   height: 60px;
   border: none;
-  background-color: white;
   cursor: pointer;
-  border: 1px solid #d3d3d3;
   transition: background-color 0.1s ease;
 }
 
@@ -97,4 +93,24 @@ span {
   font-size: 14px;
   width: 100%;
   text-align: center;
+}
+
+@media (max-width: 560px) {
+  .window {
+    width: 98%;
+    gap: 10px;
+  }
+  .window input {
+    width: 60px;
+    height: 40px;
+    font-size: 14px;
+  }
+  button {
+    width: 40px;
+    height: 40px;
+  }
+  span,
+  .panel button {
+    font-size: 12px;
+  }
 }
